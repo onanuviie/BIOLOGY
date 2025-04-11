@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Microscope Size Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(45deg, #f7b42c, #fc575e);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+    }
+  
+    .container:hover {
+      transform: scale(1.05);
+    }
+  
+    h2 {
+      color: #333;
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+  
+    label {
+      display: block;
+      font-size: 1em;
+      color: #555;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      text-align: left;
+    }
+  
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+  
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1.1em;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+  
+    button:hover {
+      background-color: #0056b3;
+    }
+  
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  
+    #result.green {
+      color: #28a745;
+    }
+  
+    #result.red {
+      color: #dc3545;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <h2>Microscope Size Calculator</h2>
+
+    <label for="username">Your Name:</label>
+    <input type="text" id="username" placeholder="Enter your name" />
+
+    <label for="microscopeSize">Microscope Size (μm):</label>
+    <input type="number" id="microscopeSize" placeholder="Enter size under microscope" />
+
+    <label for="magnification">Magnification:</label>
+    <input type="number" id="magnification" placeholder="Enter magnification" />
+
+    <button onclick="calculateAndSubmit()">Calculate & Save</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function calculateAndSubmit() {
+      const username = document.getElementById('username').value;
+      const microscopeSize = parseFloat(document.getElementById('microscopeSize').value);
+      const magnification = parseFloat(document.getElementById('magnification').value);
+      const resultDiv = document.getElementById('result');
+
+      if (!username || isNaN(microscopeSize) || isNaN(magnification) || magnification === 0) {
+        resultDiv.textContent = "Please fill in all fields correctly.";
+        resultDiv.style.color = "red";
+        return;
+      }
+
+      const actualSize = microscopeSize / magnification;
+
+      // Display result
+      resultDiv.textContent = `Real Life Size: ${actualSize.toFixed(4)} μm`;
+      resultDiv.style.color = "green";
+
+      // Send data to backend
+      fetch('http://localhost:3000/api/entries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username,
+          microscopeSize,
+          magnification
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Saved:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+</body>
+</html>

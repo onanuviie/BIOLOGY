@@ -1,0 +1,14 @@
+[
+  {
+    "username": "Amoeba",
+    "microscopeSize": 1600,
+    "magnification": 2,
+    "actualSize": 800
+  },
+  {
+    "username": "Spyrogyra",
+    "microscopeSize": 2000,
+    "magnification": 1.5,
+    "actualSize": 1333.3333333333333
+  }
+]
