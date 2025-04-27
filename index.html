@@ -26,6 +26,23 @@
       text-align: center;
       transition: transform 0.3s ease-in-out;
     }
+
+    #pastEntries {
+  margin-top: 30px;
+}
+
+#entriesList {
+  list-style-type: none;
+  padding: 0;
+}
+
+#entriesList li {
+  background-color: #e9ecef;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
   
     .container:hover {
       transform: scale(1.05);
@@ -114,9 +131,31 @@
     <button onclick="calculateAndSubmit()">Calculate & Save</button>
 
     <div id="result"></div>
+
+    <div id="pastEntries">
+      <h3>Past Calculations</h3>
+      <ul id="entriesList"></ul>
+    </div>
   </div>
 
   <script>
+    function loadPastEntries() {
+      fetch('http://localhost:3000/api/entries')
+        .then(response => response.json())
+        .then(entries => {
+          const entriesList = document.getElementById('entriesList');
+          entriesList.innerHTML = ''; // Clear old entries
+          entries.forEach(entry => {
+            const li = document.createElement('li');
+            li.textContent = `${entry.username} - Microscope Size: ${entry.microscopeSize} μm, Magnification: ${entry.magnification}, Real Life Size: ${entry.actualSize.toFixed(4)} μm`;
+            entriesList.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching entries:', error);
+        });
+    }
+
     function calculateAndSubmit() {
       const username = document.getElementById('username').value;
       const microscopeSize = parseFloat(document.getElementById('microscopeSize').value);
@@ -150,11 +189,14 @@
       .then(response => response.json())
       .then(data => {
         console.log('Saved:', data);
+        loadPastEntries(); // 👉 Refresh list after saving
       })
       .catch(error => {
         console.error('Error:', error);
       });
     }
+
+    window.onload = loadPastEntries; // Load past entries when page loads
   </script>
 </body>
 </html>
